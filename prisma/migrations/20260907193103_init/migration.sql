@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- CreateEnum
 CREATE TYPE "MessageRole" AS ENUM ('user', 'assistant', 'system');
 
