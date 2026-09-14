@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { supabaseAdmin } from "@/lib/supabase";
+import { extractPages } from "@/lib/rag/extract";
+import { chunkPages } from "@/lib/rag/chunk";
+import { embedTexts } from "@/lib/rag/embed";
+import { randomUUID } from "crypto";
 
 const BUCKET = "documents";
 
@@ -24,7 +28,7 @@ export async function uploadDocument(
 
   if (uploadError) throw new Error(`Error al subir archivo: ${uploadError.message}`);
 
-  return prisma.document.create({
+  const document = await prisma.document.create({
     data: {
       userId,
       subjectId: subjectId || null,
@@ -32,6 +36,28 @@ export async function uploadDocument(
       storageKey,
     },
   });
+
+  try {
+    const pages = await extractPages(file);
+    const chunks = chunkPages(pages);
+
+    if (chunks.length > 0) {
+      const embeddings = await embedTexts(chunks.map((c) => c.content));
+
+      for (let i = 0; i < chunks.length; i++) {
+        const id = randomUUID();
+        const vectorLiteral = `[${embeddings[i].join(",")}]`;
+        await prisma.$executeRaw`
+          INSERT INTO "DocumentChunk" (id, "documentId", content, page, embedding)
+          VALUES (${id}, ${document.id}, ${chunks[i].content}, ${chunks[i].page}, ${vectorLiteral}::vector)
+        `;
+      }
+    }
+  } catch (err) {
+    console.error("Error procesando documento para RAG:", err);
+  }
+
+  return document;
 }
 
 export async function getDocumentDownloadUrl(userId: string, documentId: string) {
@@ -42,7 +68,7 @@ export async function getDocumentDownloadUrl(userId: string, documentId: string)
 
   const { data, error } = await supabaseAdmin.storage
     .from(BUCKET)
-    .createSignedUrl(doc.storageKey, 60); // URL válida 60 segundos
+    .createSignedUrl(doc.storageKey, 60);
 
   if (error) throw new Error(`Error al generar URL: ${error.message}`);
   return data.signedUrl;
