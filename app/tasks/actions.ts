@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { createTask, toggleTaskCompleted, deleteTask } from "@/lib/services/tasks";
+import { createTask, toggleTaskCompleted, deleteTask, updateTask } from "@/lib/services/tasks";
 import { revalidatePath } from "next/cache";
 
 export async function createTaskAction(formData: FormData) {
@@ -30,5 +30,18 @@ export async function deleteTaskAction(taskId: string) {
   if (!session?.user?.id) throw new Error("No autenticado");
 
   await deleteTask(session.user.id, taskId);
+  revalidatePath("/tasks");
+}
+
+export async function updateTaskAction(taskId: string, formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("No autenticado");
+
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const dueDate = new Date(formData.get("dueDate") as string);
+  const subjectId = formData.get("subjectId") as string;
+
+  await updateTask(session.user.id, taskId, { title, description, dueDate, subjectId });
   revalidatePath("/tasks");
 }

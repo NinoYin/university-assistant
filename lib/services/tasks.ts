@@ -41,3 +41,19 @@ export async function deleteTask(userId: string, taskId: string) {
 
   return prisma.task.delete({ where: { id: taskId } });
 }
+
+export async function updateTask(
+  userId: string,
+  taskId: string,
+  data: { title?: string; description?: string; dueDate?: Date; subjectId?: string }
+) {
+  const task = await prisma.task.findFirst({ where: { id: taskId, subject: { userId } } });
+  if (!task) throw new Error("Tarea no encontrada o no autorizada");
+
+  if (data.subjectId) {
+    const subject = await prisma.subject.findFirst({ where: { id: data.subjectId, userId } });
+    if (!subject) throw new Error("Materia no encontrada o no autorizada");
+  }
+
+  return prisma.task.update({ where: { id: taskId }, data });
+}

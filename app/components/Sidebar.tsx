@@ -1,17 +1,21 @@
-//app/components/Sidebar.tsx
 "use client";
 
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 type SidebarProps = {
-  currentPath: string; // Para saber qué enlace marcar como activo
-  isDarkMode?: boolean;
-  setIsDarkMode?: (value: boolean) => void;
+  currentPath: string;
 };
 
-export default function Sidebar({ currentPath, isDarkMode, setIsDarkMode }: SidebarProps) {
-  // Función auxiliar para saber qué enlace resaltar
+export default function Sidebar({ currentPath }: SidebarProps) {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+
   const isActive = (path: string) => currentPath === path;
 
   const linkClass = (path: string) =>
@@ -23,24 +27,21 @@ export default function Sidebar({ currentPath, isDarkMode, setIsDarkMode }: Side
 
   return (
     <aside className="w-72 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 hidden md:flex flex-col">
-      {/* Cabecera del Sidebar */}
       <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
         <div className="flex items-center gap-2 font-bold text-lg">
           <span className="text-2xl">🐙</span>
           <span>UniApp</span>
         </div>
-        {/* Si se pasa la función de modo oscuro, mostramos el botón (útil para el chat o global) */}
-        {setIsDarkMode && typeof isDarkMode === "boolean" && (
+        {mounted && (
           <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors"
           >
-            {isDarkMode ? "O_O" : "X_X"}
+            {theme === "dark" ? "O_O" : "X_X"}
           </button>
         )}
       </div>
 
-      {/* Navegación */}
       <nav className="flex-1 overflow-y-auto p-4 space-y-1">
         <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 ml-1">
           Menú Principal
@@ -59,7 +60,6 @@ export default function Sidebar({ currentPath, isDarkMode, setIsDarkMode }: Side
         </Link>
       </nav>
 
-      {/* Cerrar sesión */}
       <div className="p-4 border-t border-slate-200 dark:border-slate-800">
         <button
           onClick={() => signOut()}

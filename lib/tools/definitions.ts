@@ -74,4 +74,66 @@ export const toolDefinitions = [
       },
     },
   },
+    {
+    type: "function" as const,
+    function: {
+      name: "update_task",
+      description: "Actualiza el título, descripción o fecha de una tarea existente. Requiere el id, obtenido primero con get_tasks.",
+      parameters: {
+        type: "object",
+        properties: {
+          taskId: { type: "string" },
+          title: { type: "string" },
+          description: { type: "string" },
+          dueDate: { type: "string", description: "Formato YYYY-MM-DD." },
+        },
+        required: ["taskId"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_subject",
+      description: "Actualiza el nombre, profesor u horario de una materia existente. Requiere el id, obtenido primero con get_subjects.",
+      parameters: {
+        type: "object",
+        properties: {
+          subjectId: { type: "string" },
+          name: { type: "string" },
+          professor: { type: "string" },
+          schedule: { type: "string" },
+        },
+        required: ["subjectId"],
+      },
+    },
+  },
+    {
+    type: "function" as const,
+    function: {
+      name: "create_subject",
+      description: "Crea una materia nueva.",
+      parameters: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          professor: { type: "string" },
+          schedule: { type: "string" },
+        },
+        required: ["name"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "delete_subject",
+      description: "Elimina una materia y todo lo asociado a ella (tareas, documentos vinculados quedan sin materia). Requiere el id, obtenido primero con get_subjects. Si la instrucción es ambigua sobre cuál materia borrar, pide confirmación del nombre exacto antes de proceder.",
+      parameters: {
+        type: "object",
+        properties: { subjectId: { type: "string" } },
+        required: ["subjectId"],
+      },
+    },
+  },
 ];

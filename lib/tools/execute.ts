@@ -1,11 +1,15 @@
 import { prisma } from "@/lib/prisma";
-import { getSubjects } from "@/lib/services/subjects";
-import { getTasks, createTask, toggleTaskCompleted, deleteTask } from "@/lib/services/tasks";
+import { getSubjects, updateSubject, createSubject, deleteSubject } from "@/lib/services/subjects";
+import { getTasks, createTask, toggleTaskCompleted, deleteTask, updateTask } from "@/lib/services/tasks";
 import { semanticSearch } from "@/lib/rag/search";
 
 interface ToolArgs {
   onlyPending?: boolean;
   subjectName?: string;
+  subjectId?: string;
+  name?: string;
+  professor?: string;
+  schedule?: string;
   title?: string;
   description?: string;
   dueDate?: string;
@@ -67,6 +71,38 @@ export async function executeTool(userId: string, name: string, args: ToolArgs):
     case "search_documents": {
       const chunks = await semanticSearch(userId, args.query!, 5);
       return JSON.stringify(chunks.map((c) => ({ content: c.content, source: c.filename, page: c.page })));
+    }
+
+        case "update_task": {
+      const data: { title?: string; description?: string; dueDate?: Date } = {};
+      if (args.title) data.title = args.title;
+      if (args.description) data.description = args.description;
+      if (args.dueDate) data.dueDate = new Date(args.dueDate);
+      await updateTask(userId, args.taskId!, data);
+      return JSON.stringify({ success: true });
+    }
+
+    case "update_subject": {
+      const data: { name?: string; professor?: string; schedule?: string } = {};
+      if (args.name) data.name = args.name;
+      if (args.professor) data.professor = args.professor;
+      if (args.schedule) data.schedule = args.schedule;
+      await updateSubject(userId, args.subjectId!, data);
+      return JSON.stringify({ success: true });
+    }
+
+        case "create_subject": {
+      const subject = await createSubject(userId, {
+        name: args.name!,
+        professor: args.professor,
+        schedule: args.schedule,
+      });
+      return JSON.stringify({ success: true, subjectId: subject.id });
+    }
+
+    case "delete_subject": {
+      await deleteSubject(userId, args.subjectId!);
+      return JSON.stringify({ success: true });
     }
 
     default:

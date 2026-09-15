@@ -25,3 +25,14 @@ export async function deleteSubject(userId: string, subjectId: string) {
 
   return prisma.subject.delete({ where: { id: subjectId } });
 }
+
+export async function updateSubject(
+  userId: string,
+  subjectId: string,
+  data: { name?: string; professor?: string; schedule?: string }
+) {
+  const subject = await prisma.subject.findFirst({ where: { id: subjectId, userId } });
+  if (!subject) throw new Error("Materia no encontrada o no autorizada");
+
+  return prisma.subject.update({ where: { id: subjectId }, data });
+}

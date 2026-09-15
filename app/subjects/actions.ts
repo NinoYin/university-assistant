@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth";
-import { createSubject, deleteSubject } from "@/lib/services/subjects";
+import { createSubject, deleteSubject, updateSubject } from "@/lib/services/subjects";
 import { revalidatePath } from "next/cache";
 
 export async function createSubjectAction(formData: FormData) {
@@ -21,5 +21,17 @@ export async function deleteSubjectAction(subjectId: string) {
   if (!session?.user?.id) throw new Error("No autenticado");
 
   await deleteSubject(session.user.id, subjectId);
+  revalidatePath("/subjects");
+}
+
+export async function updateSubjectAction(subjectId: string, formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("No autenticado");
+
+  const name = formData.get("name") as string;
+  const professor = formData.get("professor") as string;
+  const schedule = formData.get("schedule") as string;
+
+  await updateSubject(session.user.id, subjectId, { name, professor, schedule });
   revalidatePath("/subjects");
 }
