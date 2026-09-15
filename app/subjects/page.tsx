@@ -1,3 +1,4 @@
+//app/subjects/page.tsx
 import { auth } from "@/lib/auth";
 import { getSubjects } from "@/lib/services/subjects";
 import { createSubjectAction, deleteSubjectAction } from "./actions";

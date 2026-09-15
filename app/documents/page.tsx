@@ -1,3 +1,4 @@
+//app/documents/page.tsx
 import { auth } from "@/lib/auth";
 import { getDocuments } from "@/lib/services/documents";
 import { getSubjects } from "@/lib/services/subjects";
