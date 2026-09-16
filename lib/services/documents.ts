@@ -15,12 +15,20 @@ export async function getDocuments(userId: string) {
   });
 }
 
+function sanitizeForStorageKey(filename: string): string {
+  return filename
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // quita acentos 
+    .replace(/[^a-zA-Z0-9._-]/g, "_"); // reemplaza espacios y cualquier otro carácter raro por "_"
+}
+
 export async function uploadDocument(
   userId: string,
   subjectId: string | null,
   file: File
 ) {
-  const storageKey = `${userId}/${Date.now()}-${file.name}`;
+  const safeName = sanitizeForStorageKey(file.name);
+  const storageKey = `${userId}/${Date.now()}-${safeName}`;
 
   const { error: uploadError } = await supabaseAdmin.storage
     .from(BUCKET)
