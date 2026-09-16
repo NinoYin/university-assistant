@@ -6,7 +6,10 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
-  serverExternalPackages: ['pdf-parse', 'pdfjs-dist']
+  serverExternalPackages: ["pdf-parse", "pdfjs-dist"],
+  outputFileTracingIncludes: {
+    "/documents": ["./node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs"],
+  },
 };
 
 export default nextConfig;
