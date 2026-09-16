@@ -1,3 +1,4 @@
+import "./pdf-polyfill";
 import mammoth from "mammoth";
 import { PDFParse } from "pdf-parse";
 
