@@ -2,7 +2,7 @@
 
 Sistema de asistente académico con IA que permite a un estudiante consultar sus materias, tareas y documentos mediante lenguaje natural, con soporte de RAG (búsqueda semántica sobre apuntes propios) y un agente capaz de ejecutar acciones reales sobre la base de datos (crear, consultar, editar y eliminar materias y tareas) mediante tool calling.
 
-> Proyecto de portafolio — desarrollado como forma de aplicar en un sistema real los temas vistos en las materias de Inteligencia Artificial, Sistemas de Información y Robótica Móvil de la Licenciatura en Ingeniería en Sistemas Computacionales (Universidad de Guanajuato).
+> Proyecto de portafolio — desarrollado como forma de aplicar en un sistema real los temas vistos en las materias de Inteligencia Artificial y Sistemas de Información de la Licenciatura en Ingeniería en Sistemas Computacionales (Universidad de Guanajuato).
 
 ## 🔗 Demo en vivo
 
@@ -51,16 +51,16 @@ Next.js (Frontend + API Routes + Server Actions)
   └──► OpenAI API ──► chat, embeddings, tool calling
           │
           ▼
-   ┌─────────────────────────────┐
-   │        Tools del agente        │
-   ├─────────────────────────────┤
-   │ get_subjects / create_subject     │
+   ┌─────────────────────────────────────┐
+   │           Tools del agente          │
+   ├─────────────────────────────────────┤
+   │ get_subjects / create_subject       │
    │ update_subject / delete_subject     │
-   │ get_tasks / create_task                │
-   │ update_task / toggle_task_completed       │
-   │ delete_task                                │
-   │ search_documents (RAG)                        │
-   └─────────────────────────────┘
+   │ get_tasks / create_task             │
+   │ update_task / toggle_task_completed │
+   │ delete_task                         │
+   │ search_documents (RAG)              │
+   └─────────────────────────────────────┘
 ```
 
 ### Flujo de RAG
@@ -186,4 +186,4 @@ Abre [http://localhost:3000](http://localhost:3000).
 
 ## 👤 Autor
 
-Ruben Isaac Barroso Paredes — Lic. Ingeniería en Sistemas Computacionales, Universidad de Guanajuato
+Ruben Isaac Barroso Paredes — Lic. Ingeniería en Sistemas Computacionales, División de Ingeniería Campus Irapuato-Salamanca (Antes FIMME), Universidad de Guanajuato
