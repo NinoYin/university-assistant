@@ -1,27 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import { updateSubjectAction, deleteSubjectAction } from "./actions";
+import { useState, useEffect } from "react";
+import { useActionState } from "react";
+import { updateSubjectAction, deleteSubjectAction, type ActionState } from "./actions";
 
+const initialResult: ActionState = { error: null, success: false };
 type Subject = { id: string; name: string; professor: string | null; schedule: string | null };
 
 export default function SubjectItem({ subject }: { subject: Subject }) {
   const [editing, setEditing] = useState(false);
+  const updateWithId = updateSubjectAction.bind(null, subject.id);
+  const [state, formAction, pending] = useActionState(updateWithId, initialResult);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- cierra el modo edición solo cuando el guardado ya terminó con éxito, no en cada render
+    if (state.success) setEditing(false);
+  }, [state]);
 
   if (editing) {
     return (
-      <form
-        action={async (formData) => {
-          await updateSubjectAction(subject.id, formData);
-          setEditing(false);
-        }}
-        className="bg-white dark:bg-slate-950 border border-emerald-200 dark:border-emerald-900 rounded-2xl p-5 flex flex-col gap-3"
-      >
+      <form action={formAction} className="bg-white dark:bg-slate-950 border border-emerald-200 dark:border-emerald-900 rounded-2xl p-5 flex flex-col gap-3">
+        {state.error && (
+          <p className="text-sm text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-400 px-3 py-2 rounded-lg">
+            {state.error}
+          </p>
+        )}
         <input name="name" defaultValue={subject.name} required className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5" />
         <input name="professor" defaultValue={subject.professor ?? ""} placeholder="Profesor" className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5" />
         <input name="schedule" defaultValue={subject.schedule ?? ""} placeholder="Horario" className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5" />
         <div className="flex gap-2">
-          <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-2 text-sm font-medium">Guardar</button>
+          <button type="submit" disabled={pending} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-2 text-sm font-medium disabled:opacity-50">
+            {pending ? "Guardando..." : "Guardar"}
+          </button>
           <button type="button" onClick={() => setEditing(false)} className="text-slate-500 text-sm px-4 py-2">Cancelar</button>
         </div>
       </form>

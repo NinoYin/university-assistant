@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { updateTaskAction, toggleTaskAction, deleteTaskAction } from "./actions";
+import { useState, useEffect } from "react";
+import { useActionState } from "react";
+import { updateTaskAction, toggleTaskAction, deleteTaskAction, type ActionState } from "./actions";
 
 type Task = {
   id: string;
@@ -13,19 +14,27 @@ type Task = {
 };
 type Subject = { id: string; name: string };
 
+const initialResult: ActionState = { error: null, success: false };
+
 export default function TaskItem({ task, subjects }: { task: Task; subjects: Subject[] }) {
   const [editing, setEditing] = useState(false);
   const dueDateValue = new Date(task.dueDate).toISOString().split("T")[0];
+  const updateWithId = updateTaskAction.bind(null, task.id);
+  const [state, formAction, pending] = useActionState(updateWithId, initialResult);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- cierra el modo edición solo cuando el guardado terminó con éxito
+    if (state.success) setEditing(false);
+  }, [state]);
 
   if (editing) {
     return (
-      <form
-        action={async (formData) => {
-          await updateTaskAction(task.id, formData);
-          setEditing(false);
-        }}
-        className="border border-emerald-200 dark:border-emerald-900 bg-white dark:bg-slate-950 rounded-2xl p-4 flex flex-col gap-3"
-      >
+      <form action={formAction} className="border border-emerald-200 dark:border-emerald-900 bg-white dark:bg-slate-950 rounded-2xl p-4 flex flex-col gap-3">
+        {state.error && (
+          <p className="text-sm text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-400 px-3 py-2 rounded-lg">
+            {state.error}
+          </p>
+        )}
         <input name="title" defaultValue={task.title} required className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5" />
         <select name="subjectId" defaultValue={task.subject.id} required className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5">
           {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -33,7 +42,9 @@ export default function TaskItem({ task, subjects }: { task: Task; subjects: Sub
         <textarea name="description" defaultValue={task.description ?? ""} className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 resize-none" rows={2} />
         <input name="dueDate" type="date" defaultValue={dueDateValue} required className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5" />
         <div className="flex gap-2">
-          <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-2 text-sm font-medium">Guardar</button>
+          <button type="submit" disabled={pending} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-4 py-2 text-sm font-medium disabled:opacity-50">
+            {pending ? "Guardando..." : "Guardar"}
+          </button>
           <button type="button" onClick={() => setEditing(false)} className="text-slate-500 text-sm px-4 py-2">Cancelar</button>
         </div>
       </form>

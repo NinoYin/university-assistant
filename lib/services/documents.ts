@@ -76,7 +76,7 @@ export async function getDocumentDownloadUrl(userId: string, documentId: string)
 
   const { data, error } = await supabaseAdmin.storage
     .from(BUCKET)
-    .createSignedUrl(doc.storageKey, 60);
+    .createSignedUrl(doc.storageKey, 300); // URL válida por 5 minutos
 
   if (error) throw new Error(`Error al generar URL: ${error.message}`);
   return data.signedUrl;
