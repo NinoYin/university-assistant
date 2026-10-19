@@ -8,7 +8,7 @@ Sistema de asistente académico con IA que permite a un estudiante consultar sus
 
 **[university-assistant-theta.vercel.app](https://university-assistant-theta.vercel.app)** — desplegado en Vercel, inicio de sesión con Google.
 
-## ✨ Características
+## ᓚᘏᗢ Características
 
 - **Chat conversacional** con historial persistente por usuario.
 - **Autenticación** con Google (Auth.js).
@@ -20,7 +20,7 @@ Sistema de asistente académico con IA que permite a un estudiante consultar sus
 - **Modo claro/oscuro** persistente, y **navegación adaptada a móvil**.
 - **Validación y manejo de errores** en todos los formularios (Zod + `useActionState`) — sin pantallas de error genéricas ante datos inválidos.
 
-## 🏗️ Stack técnico
+##  Stack técnico
 
 | Capa | Tecnología |
 |---|---|
@@ -38,7 +38,7 @@ Sistema de asistente académico con IA que permite a un estudiante consultar sus
 | Automatización | Vercel Cron |
 | Despliegue | Vercel |
 
-## 🧠 Arquitectura
+##  Arquitectura
 
 ```
 Usuario
@@ -103,11 +103,11 @@ Formulario (Client Component)
     limpia o cierra su modo de edición automáticamente
 ```
 
-## 🗄️ Modelo de datos
+##  Modelo de datos
 
 `User` · `Subject` · `Task` · `Document` · `DocumentChunk` (con `embedding vector(1536)`) · `Conversation` · `Message` · `Account` / `Session` / `VerificationToken` (Auth.js)
 
-## 🔧 Decisiones técnicas y por qué
+##  Decisiones técnicas y por qué
 
 - **Next.js full-stack en vez de frontend/backend separados**: reduce infraestructura a administrar en las primeras versiones; permite escalar a servicios separados más adelante si fuera necesario.
 - **pgvector sobre una base vectorial dedicada (Pinecone, etc.)**: al ya usar PostgreSQL para todo lo demás, evita una pieza de infraestructura adicional — los embeddings viven junto a los datos relacionales que describen.
@@ -119,7 +119,7 @@ Formulario (Client Component)
 - **`outputFileTracingIncludes` para el worker de `pdfjs-dist`**: al marcar `pdf-parse`/`pdfjs-dist` como paquetes externos (necesario para evitar un bug de Turbopack en desarrollo), el rastreador de archivos de Vercel dejaba fuera un archivo interno (`pdf.worker.mjs`) que la librería necesita en tiempo de ejecución; se declaró explícitamente para forzar su inclusión en el paquete desplegado.
 - **Sanitización del nombre de archivo para las rutas de Supabase Storage**: Supabase Storage no acepta acentos ni ciertos caracteres en las rutas de objetos. Se normaliza el nombre solo para la ruta de almacenamiento, conservando el nombre original (con acentos y espacios) como metadato visible en la interfaz.
 
-## 🚀 Cómo correrlo localmente
+##  Cómo correrlo localmente
 
 ### Requisitos
 
@@ -184,6 +184,6 @@ Abre [http://localhost:3000](http://localhost:3000).
 - [ ] Testing automatizado (Vitest) — *pendiente, no bloqueante*
 - [ ] Modo de estudio (quizzes, flashcards, plan de estudio generado) — *posible extensión futura*
 
-## 👤 Autor
+## 👤 Autor - ༼ つ ◕_◕ ༽つ
 
 Ruben Isaac Barroso Paredes — Lic. Ingeniería en Sistemas Computacionales, División de Ingeniería Campus Irapuato-Salamanca (Antes FIMEE), Universidad de Guanajuato
