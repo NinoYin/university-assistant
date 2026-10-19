@@ -186,4 +186,4 @@ Abre [http://localhost:3000](http://localhost:3000).
 
 ## 👤 Autor
 
-Ruben Isaac Barroso Paredes — Lic. Ingeniería en Sistemas Computacionales, División de Ingeniería Campus Irapuato-Salamanca (Antes FIMME), Universidad de Guanajuato
+Ruben Isaac Barroso Paredes — Lic. Ingeniería en Sistemas Computacionales, División de Ingeniería Campus Irapuato-Salamanca (Antes FIMEE), Universidad de Guanajuato
